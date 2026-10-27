@@ -1,7 +1,7 @@
 # 🎓 RVCE Student Intelligence & Academic Lifecycle Management System
 
 A production-grade, full-stack **MERN** application engineered for autonomous student tracking, academic lifecycle analytics, and proactive risk detection at **R.V. College of Engineering (RVCE)**.
-
+4c4tc
 ---
 
 ## 🏛️ System Architecture & Tech Stack
