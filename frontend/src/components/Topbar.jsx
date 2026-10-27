@@ -45,8 +45,8 @@ export default function Topbar({ activeTab }) {
 
   return (
     <header
-      className="sticky top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 border-b border-white/[0.06]"
-      style={{ background: 'rgba(8, 12, 22, 0.80)', backdropFilter: 'blur(20px)' }}
+      className="topbar-surface sticky top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 border-b border-white/[0.06]"
+      style={{ backdropFilter: 'blur(20px)' }}
     >
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 text-sm text-slate-400 min-w-0">

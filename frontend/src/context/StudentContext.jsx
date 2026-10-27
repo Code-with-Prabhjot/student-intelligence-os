@@ -244,12 +244,12 @@ export const StudentProvider = ({ children }) => {
     }
   };
 
-  // Bulk Delete
   const bulkDelete = async (ids, permanent = false) => {
     try {
       const res = await axios.post(`${API_BASE}/bulk-delete`, { ids, permanent });
-      showToast(res.data.message || `Processed ${ids.length} students`, 'warning', async () => {
-        if (!permanent) {
+
+      if (!permanent) {
+        showToast(res.data.message || `Moved ${ids.length} students to trash`, 'warning', async () => {
           try {
             await axios.post(`${API_BASE}/bulk-restore`, { ids });
             showToast(`Restored ${ids.length} students`, 'success');
@@ -258,8 +258,11 @@ export const StudentProvider = ({ children }) => {
           } catch (rErr) {
             showToast('Failed to restore bulk selection', 'error');
           }
-        }
-      });
+        });
+      } else {
+        showToast(res.data.message || `Permanently deleted ${ids.length} students`, 'info');
+      }
+
       setSelectedIds([]);
       fetchStudents();
       fetchAnalytics();

@@ -284,8 +284,19 @@ export default function StudentTable() {
                       {/* Name & Avatar */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 shadow-sm flex-shrink-0">
-                            {getInitials(student.name)}
+                          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 shadow-sm flex-shrink-0 overflow-hidden">
+                            <img
+                              src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(student.usn || student.name)}`}
+                              alt={student.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextSibling) e.currentTarget.nextSibling.style.display = 'flex';
+                              }}
+                            />
+                            <span style={{ display: 'none' }} className="w-full h-full items-center justify-center">
+                              {getInitials(student.name)}
+                            </span>
                           </div>
                           <div>
                             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">

@@ -77,14 +77,25 @@ export default function StudentCard({ student, style }) {
             {/* Avatar */}
             <div className="relative flex-shrink-0">
               <div
-                className="w-12 h-12 rounded-2xl font-extrabold text-sm flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-105"
+                className="w-12 h-12 rounded-2xl font-extrabold text-sm flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-105 overflow-hidden"
                 style={{
                   background: `linear-gradient(135deg, ${branch.bg}, ${branch.bg.replace('0.12', '0.2')})`,
                   color: branch.text,
                   border: `1px solid ${branch.border}`,
                 }}
               >
-                {getInitials(student.name)}
+                <img
+                  src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(student.usn || student.name)}`}
+                  alt={student.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    if (e.currentTarget.nextSibling) e.currentTarget.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <span style={{ display: 'none' }} className="w-full h-full items-center justify-center">
+                  {getInitials(student.name)}
+                </span>
               </div>
               {isTopPerformer && (
                 <div className="absolute -top-1.5 -right-1.5 p-1 rounded-full bg-amber-500 shadow-lg animate-float">
@@ -95,7 +106,7 @@ export default function StudentCard({ student, style }) {
 
             {/* Name + USN */}
             <div className="min-w-0">
-              <h4 className="font-bold text-white dark:text-white text-[15px] leading-tight group-hover:text-blue-300 transition-colors duration-200 truncate">
+              <h4 className="font-bold text-slate-900 dark:text-white text-[15px] leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-300 transition-colors duration-200 truncate">
                 {student.name}
               </h4>
               <span

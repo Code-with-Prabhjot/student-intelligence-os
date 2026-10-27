@@ -10,7 +10,6 @@ try {
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/rvce_student_db';
 
-let isConnected = false;
 
 const connectDB = async () => {
   try {
@@ -20,7 +19,6 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 8000,
     });
 
-    isConnected = true;
     console.log('\n╔═══════════════════════════════════════════════════════════════════╗');
     console.log('║               MONGODB DATABASE CONNECTED SUCCESSFULLY             ║');
     console.log('╠═══════════════════════════════════════════════════════════════════╣');
@@ -30,7 +28,6 @@ const connectDB = async () => {
     console.log('╚═══════════════════════════════════════════════════════════════════╝\n');
     return conn;
   } catch (err) {
-    isConnected = false;
     console.warn(`[Database Error] ${err.message}`);
     console.warn('\n╔═══════════════════════════════════════════════════════════════════╗');
     console.warn('║                     MONGODB CONNECTION NOTICE                     ║');

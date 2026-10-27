@@ -62,9 +62,9 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
   return (
     <aside
-      className={`relative flex-shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out border-r border-white/[0.06] ${collapsed ? 'w-[68px]' : 'w-[220px]'
+      className={`sidebar-surface relative flex-shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out border-r border-white/[0.06] ${collapsed ? 'w-[68px]' : 'w-[220px]'
         }`}
-      style={{ background: 'rgba(8, 12, 22, 0.85)', backdropFilter: 'blur(20px)' }}
+      style={{ backdropFilter: 'blur(20px)' }}
     >
       {/* ── Logo ── */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.06]">
@@ -84,7 +84,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
         {NAV.map(({ group, items }) => (
           <div key={group}>
             {!collapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 px-2 mb-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-1.5">
                 {group}
               </p>
             )}
@@ -101,14 +101,14 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     }}
                     title={collapsed ? label : undefined}
                     className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 group relative ${isActive
-                        ? 'bg-blue-600/15 text-blue-300 border border-blue-500/20'
-                        : 'text-slate-400 hover:text-white hover:bg-white/[0.05] border border-transparent'
+                        ? 'bg-blue-600/15 text-blue-600 border border-blue-500/20'
+                        : 'text-slate-500 hover:text-slate-800 hover:bg-white/[0.05] border border-transparent dark:text-slate-400 dark:hover:text-white'
                       }`}
                   >
                     {isActive && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-blue-400 rounded-r-full" />
                     )}
-                    <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                    <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive ? 'text-blue-500' : 'text-slate-400 group-hover:text-slate-600'}`} />
                     {!collapsed && (
                       <span className="truncate text-[13px]">{label}</span>
                     )}
@@ -155,7 +155,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       <button
         type="button"
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3.5 top-[72px] w-7 h-7 rounded-full border border-white/10 bg-slate-900 flex items-center justify-center text-slate-400 hover:text-white hover:border-white/20 transition-all shadow-lg z-10"
+        className="sidebar-collapse-btn absolute -right-3.5 top-[72px] w-7 h-7 rounded-full border flex items-center justify-center transition-all shadow-lg z-10"
       >
         {collapsed
           ? <ChevronRight className="w-3.5 h-3.5" />

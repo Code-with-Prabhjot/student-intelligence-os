@@ -15,6 +15,7 @@ const {
 } = require('../controllers/studentController');
 
 // Analytics & Bulk Routes (Defined before :id parameterized routes)
+router.get('/stats', getStudentAnalytics);
 router.get('/stats/analytics', getStudentAnalytics);
 router.get('/export/all', exportStudentsData);
 router.post('/bulk-import', bulkImportStudents);

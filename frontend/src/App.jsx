@@ -15,10 +15,12 @@ import AttendanceRiskRadar from './components/AttendanceRiskRadar';
 import TopPerformers from './components/TopPerformers';
 import PlacementRadar from './components/PlacementRadar';
 import LandingPage from './components/LandingPage';
+import RecordsPage from './components/RecordsPage';
+import SettingsPage from './components/SettingsPage';
 import { useStudentContext } from './context/StudentContext';
 import {
   RotateCcw, SlidersHorizontal, ChevronLeft, ChevronRight,
-  Trash2, Users, ChevronDown, BookOpen, FileDown, Settings, Briefcase
+  Trash2, Users, ChevronDown, BookOpen, FileDown, Settings as SettingsIcon, Briefcase
 } from 'lucide-react';
 
 const branchOptions = [
@@ -139,33 +141,42 @@ function FilterBar() {
   );
 }
 
-/* ── Settings placeholder ── */
-function SettingsPage() {
-  return (
-    <div className="animate-slide-up-fade">
-      <h2 className="text-xl font-extrabold text-white flex items-center gap-2 mb-6">
-        <Settings className="w-5 h-5 text-slate-400" /> Settings
-      </h2>
-      <div className="glass-card rounded-2xl p-8 text-center text-slate-400">
-        <Settings className="w-10 h-10 mx-auto mb-3 opacity-30" />
-        <p className="text-sm">System settings coming soon.</p>
+/* ── Shimmer Skeleton Loader ── */
+function DirectorySkeleton({ viewMode }) {
+  if (viewMode === 'table') {
+    return (
+      <div className="glass-card rounded-2xl overflow-hidden border border-white/[0.08] p-4 space-y-3">
+        <div className="h-10 bg-white/5 rounded-xl animate-pulse" />
+        {[1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} className="h-12 bg-white/[0.03] rounded-xl animate-pulse flex items-center px-4 gap-4">
+            <div className="w-8 h-8 rounded-lg bg-white/10" />
+            <div className="w-24 h-4 rounded bg-white/10" />
+            <div className="flex-1 h-4 rounded bg-white/5" />
+            <div className="w-16 h-4 rounded bg-white/10" />
+          </div>
+        ))}
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-/* ── Records placeholder ── */
-function RecordsPage() {
   return (
-    <div className="animate-slide-up-fade">
-      <h2 className="text-xl font-extrabold text-white flex items-center gap-2 mb-6">
-        <BookOpen className="w-5 h-5 text-slate-400" /> Academic Records
-      </h2>
-      <div className="glass-card rounded-2xl p-8 text-center text-slate-400">
-        <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-30" />
-        <p className="text-sm">Detailed academic records view coming soon.</p>
-        <p className="text-xs mt-1 text-slate-500">Use the Student Directory to view individual profiles.</p>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="glass-card rounded-2xl p-5 border border-white/[0.08] space-y-4 animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-white/10" />
+            <div className="space-y-1.5 flex-1">
+              <div className="h-4 w-3/4 rounded bg-white/10" />
+              <div className="h-3 w-1/2 rounded bg-white/5" />
+            </div>
+            <div className="w-12 h-5 rounded-full bg-white/10" />
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/5">
+            <div className="h-10 rounded-xl bg-white/5" />
+            <div className="h-10 rounded-xl bg-white/5" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -179,10 +190,7 @@ function DirectoryView() {
       <FilterBar />
 
       {loading ? (
-        <div className="glass-card rounded-2xl p-16 text-center flex flex-col items-center gap-3">
-          <div className="w-7 h-7 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading student records…</p>
-        </div>
+        <DirectorySkeleton viewMode={viewMode} />
       ) : viewMode === 'table' ? (
         <StudentTable />
       ) : (
@@ -251,7 +259,7 @@ export default function App() {
       case 'performers': return <TopPerformers />;
       case 'placement': return <PlacementRadar />;
       case 'portal': return <LandingPage onLaunchApp={() => setActiveTab('overview')} />;
-      case 'records': return <RecordsPage />;
+      case 'records': return <RecordsPage setActiveTab={setActiveTab} />;
       case 'export': return <ExportPage />;
       case 'settings': return <SettingsPage />;
       default: return <OverviewPage setActiveTab={setActiveTab} />;
@@ -259,7 +267,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#070b12] selection:bg-blue-500/20">
+    <div className="flex h-screen overflow-hidden bg-[var(--bg-app)] selection:bg-blue-500/20">
 
       {/* ── Left Sidebar ── */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
