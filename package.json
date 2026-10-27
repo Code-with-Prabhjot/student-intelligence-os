@@ -1,0 +1,24 @@
+{
+  "name": "rvce-student-intelligence-system",
+  "version": "1.0.0",
+  "description": "Student Intelligence & Academic Lifecycle Management System (RVCE)",
+  "scripts": {
+    "seed": "npm run seed --prefix backend",
+    "backend": "npm start --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend"
+  },
+  "keywords": [
+    "mern",
+    "mongodb",
+    "express",
+    "react",
+    "vite",
+    "rvce",
+    "student-intelligence",
+    "bento-grid",
+    "tailwind"
+  ],
+  "author": "RVCE Engineering Architecture Team",
+  "license": "MIT"
+}
