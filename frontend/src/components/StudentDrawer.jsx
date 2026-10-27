@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Sparkles, 
-  CheckCircle2, 
-  AlertCircle, 
-  Save, 
-  UserPlus, 
-  GraduationCap, 
-  Layers, 
-  Hash, 
-  Mail, 
-  Percent, 
-  Award, 
-  BookOpen, 
+import {
+  X,
+  Sparkles,
+  CheckCircle2,
+  AlertCircle,
+  Save,
+  UserPlus,
+  GraduationCap,
+  Layers,
+  Hash,
+  Mail,
+  Percent,
+  Award,
+  BookOpen,
   Wrench,
   UserCheck
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
 const branches = [
-  'CSE', 'AIML', 'ISE', 'ECE', 'EEE', 'MECH', 
+  'CSE', 'AIML', 'ISE', 'ECE', 'EEE', 'MECH',
   'CIVIL', 'BIOTECH', 'CHEMICAL', 'AEROSPACE', 'ETE', 'IEM'
 ];
 
@@ -182,14 +182,14 @@ export default function StudentDrawer() {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
-      <div 
+      <div
         onClick={closeDrawer}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
       ></div>
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-xl glass-panel bg-slate-950/95 border-l border-white/10 shadow-2xl flex flex-col justify-between">
-          
+
           {/* Drawer Header */}
           <div className="p-6 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function StudentDrawer() {
 
           {/* Drawer Scrollable Body with Live Preview */}
           <form id="student-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
-            
+
             {/* Live Preview Card */}
             <div>
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
@@ -269,9 +269,8 @@ export default function StudentDrawer() {
                   value={formData.usn}
                   onChange={handleChange}
                   placeholder="e.g. 1RV23CS045"
-                  className={`w-full px-3.5 py-2.5 rounded-xl glass-input font-mono text-sm uppercase ${
-                    errors.usn ? 'border-rose-500 ring-1 ring-rose-500' : ''
-                  }`}
+                  className={`w-full px-3.5 py-2.5 rounded-xl glass-input font-mono text-sm uppercase ${errors.usn ? 'border-rose-500 ring-1 ring-rose-500' : ''
+                    }`}
                 />
                 {errors.usn && <p className="text-rose-400 text-xs mt-1">{errors.usn}</p>}
               </div>
@@ -307,9 +306,8 @@ export default function StudentDrawer() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Aarav Sharma"
-                  className={`w-full px-3.5 py-2.5 rounded-xl glass-input text-sm ${
-                    errors.name ? 'border-rose-500 ring-1 ring-rose-500' : ''
-                  }`}
+                  className={`w-full px-3.5 py-2.5 rounded-xl glass-input text-sm ${errors.name ? 'border-rose-500 ring-1 ring-rose-500' : ''
+                    }`}
                 />
                 {errors.name && <p className="text-rose-400 text-xs mt-1">{errors.name}</p>}
               </div>
@@ -335,9 +333,8 @@ export default function StudentDrawer() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="name.branch@rvce.edu.in"
-                  className={`w-full px-3.5 py-2.5 rounded-xl glass-input text-sm ${
-                    errors.email ? 'border-rose-500 ring-1 ring-rose-500' : ''
-                  }`}
+                  className={`w-full px-3.5 py-2.5 rounded-xl glass-input text-sm ${errors.email ? 'border-rose-500 ring-1 ring-rose-500' : ''
+                    }`}
                 />
                 {errors.email && <p className="text-rose-400 text-xs mt-1">{errors.email}</p>}
               </div>
@@ -376,9 +373,8 @@ export default function StudentDrawer() {
                   value={formData.cgpa}
                   onChange={handleChange}
                   placeholder="8.50"
-                  className={`w-full px-3 py-2.5 rounded-xl glass-input text-sm text-center font-bold ${
-                    errors.cgpa ? 'border-rose-500' : ''
-                  }`}
+                  className={`w-full px-3 py-2.5 rounded-xl glass-input text-sm text-center font-bold ${errors.cgpa ? 'border-rose-500' : ''
+                    }`}
                 />
                 {errors.cgpa && <p className="text-rose-400 text-[10px] mt-1">{errors.cgpa}</p>}
               </div>
@@ -395,9 +391,8 @@ export default function StudentDrawer() {
                   value={formData.attendance}
                   onChange={handleChange}
                   placeholder="85"
-                  className={`w-full px-3 py-2.5 rounded-xl glass-input text-sm text-center font-bold ${
-                    errors.attendance ? 'border-rose-500' : ''
-                  }`}
+                  className={`w-full px-3 py-2.5 rounded-xl glass-input text-sm text-center font-bold ${errors.attendance ? 'border-rose-500' : ''
+                    }`}
                 />
                 {errors.attendance && <p className="text-rose-400 text-[10px] mt-1">{errors.attendance}</p>}
               </div>
@@ -457,7 +452,7 @@ export default function StudentDrawer() {
 
             {/* Placement Readiness & Developer Footprint */}
             <div className="space-y-4 pt-2 border-t border-white/5">
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-400 block">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-300 block">
                 Open-Source & Placement Readiness
               </span>
 

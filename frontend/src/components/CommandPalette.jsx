@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  UserPlus, 
-  FileSpreadsheet, 
-  FileJson, 
-  Database, 
-  AlertTriangle, 
-  LayoutGrid, 
-  TableProperties, 
-  X, 
-  Sparkles, 
-  GraduationCap 
+import {
+  Search,
+  UserPlus,
+  FileSpreadsheet,
+  FileJson,
+  Database,
+  AlertTriangle,
+  LayoutGrid,
+  TableProperties,
+  X,
+  Sparkles,
+  GraduationCap
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
@@ -106,13 +106,13 @@ export default function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center pt-20 px-4">
-      <div 
+      <div
         onClick={() => setIsCommandPaletteOpen(false)}
         className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
       ></div>
 
       <div className="relative glass-card bg-slate-950/95 rounded-2xl max-w-xl w-full border border-white/10 shadow-2xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        
+
         {/* Search Bar Input */}
         <div className="p-4 border-b border-white/10 flex items-center gap-3">
           <Search className="w-5 h-5 text-blue-400" />
@@ -131,7 +131,7 @@ export default function CommandPalette() {
 
         {/* Action List */}
         <div className="p-3 max-h-96 overflow-y-auto space-y-1">
-          
+
           {query.trim() && matchedStudents.length > 0 && (
             <div className="mb-3">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-3 py-1 block">

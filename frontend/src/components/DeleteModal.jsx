@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  AlertTriangle, 
-  Trash2, 
-  X, 
-  RotateCcw, 
-  ShieldAlert 
+import {
+  AlertTriangle,
+  Trash2,
+  X,
+  RotateCcw,
+  ShieldAlert
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
@@ -32,13 +32,13 @@ export default function DeleteModal() {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
-      <div 
+      <div
         onClick={closeDeleteModal}
         className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
       ></div>
 
       <div className="relative glass-card bg-slate-950/95 rounded-2xl max-w-md w-full p-6 border border-rose-500/30 shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200">
-        
+
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center flex-shrink-0 border border-rose-500/20">
             <AlertTriangle className="w-6 h-6" />
@@ -48,7 +48,7 @@ export default function DeleteModal() {
             <h3 className="text-base font-bold text-white mb-1">
               {isBulk ? `Delete ${count} Selected Records?` : `Remove ${student?.name}?`}
             </h3>
-            
+
             <p className="text-xs text-slate-300 leading-relaxed mb-3">
               {!isBulk ? (
                 <>

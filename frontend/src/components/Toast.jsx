@@ -48,7 +48,7 @@ export default function Toast() {
     <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className={`p-4 rounded-2xl glass-panel border ${getBorderColor()} shadow-2xl flex items-center gap-3.5 max-w-md`}>
         <div className="flex-shrink-0">{getIcon()}</div>
-        
+
         <p className="text-xs sm:text-sm font-semibold text-white flex-1">
           {toast.message}
         </p>

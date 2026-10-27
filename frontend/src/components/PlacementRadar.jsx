@@ -225,8 +225,8 @@ export default function PlacementRadar() {
             onClick={() => setActiveFilter('all')}
             className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
               activeFilter === 'all'
-                ? 'bg-blue-600 text-white shadow-glow-blue'
-                : 'bg-slate-900/80 text-slate-400 hover:text-white border border-white/5'
+                ? 'bg-white/10 text-white border border-white/20 shadow-sm'
+                : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'
             }`}
           >
             All Candidates ({processedStudents.length})
@@ -456,7 +456,7 @@ export default function PlacementRadar() {
                           <button
                             type="button"
                             onClick={() => openDetailModal(s)}
-                            className="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white transition-colors"
+                            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors"
                             title="Inspect Candidate Dossier"
                           >
                             <ArrowRight className="w-4 h-4" />

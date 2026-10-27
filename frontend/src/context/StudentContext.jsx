@@ -332,7 +332,7 @@ export const StudentProvider = ({ children }) => {
         const url = URL.createObjectURL(csvBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `RVCE_Student_Data_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.download = `RVCE_Students_${new Date().toISOString().slice(0, 10)}.csv`;
         a.click();
         URL.revokeObjectURL(url);
         showToast('Exported CSV spreadsheet successfully', 'success');
