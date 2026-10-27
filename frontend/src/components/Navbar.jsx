@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
-export default function Navbar() {
+export default function Navbar({ pageView = 'app', setPageView }) {
   const { 
     searchTerm, 
     setSearchTerm, 
@@ -55,11 +55,15 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/[0.08] backdrop-blur-xl">
+      <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-200 dark:border-white/[0.08] bg-white/80 dark:bg-[#090d16]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           
           {/* Brand Logo & College Identity */}
-          <div className="flex items-center gap-3.5 flex-shrink-0">
+          <div 
+            onClick={() => setPageView && setPageView(pageView === 'portal' ? 'app' : 'portal')}
+            className="flex items-center gap-3.5 flex-shrink-0 cursor-pointer group"
+            title="Toggle Showcase Portal / Management OS"
+          >
             <div className="relative group">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-500 flex items-center justify-center shadow-glow-blue transition-transform duration-300 group-hover:scale-105">
                 <GraduationCap className="w-6 h-6 text-white" />
@@ -71,14 +75,14 @@ export default function Navbar() {
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold tracking-tight text-lg text-white font-sans">
+                <span className="font-extrabold tracking-tight text-lg text-slate-900 dark:text-white font-sans">
                   RVCE <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">STUDENT IQ</span>
                 </span>
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
                   v2.4 Pro
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-medium hidden sm:block">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">
                 Academic Lifecycle & Intelligence Management
               </p>
             </div>
@@ -93,7 +97,7 @@ export default function Navbar() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search by USN (1RV23...), Name, Branch, or Skill..."
-                className="w-full pl-10 pr-24 py-2.5 rounded-xl glass-input text-sm text-slate-200 placeholder:text-slate-400/70"
+                className="w-full pl-10 pr-24 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-900/60 text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               />
               <button
                 type="button"
@@ -111,14 +115,14 @@ export default function Navbar() {
           <div className="flex items-center gap-2 sm:gap-3">
             
             {/* View Mode Toggle */}
-            <div className="hidden sm:flex items-center p-1 rounded-xl bg-slate-900/80 border border-white/5">
+            <div className="hidden sm:flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-white/5">
               <button
                 type="button"
                 onClick={() => setViewMode('table')}
                 className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
                   viewMode === 'table'
                     ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
                 title="Table View"
               >
@@ -130,7 +134,7 @@ export default function Navbar() {
                 className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
                   viewMode === 'cards'
                     ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
                 title="Grid Cards View"
               >
@@ -143,7 +147,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setShowDbInfo(!showDbInfo)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 hover:border-blue-500/40 text-xs font-medium transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-white/10 hover:border-blue-500/40 text-xs font-medium transition-all"
                 title="MongoDB Compass Connection"
               >
                 <span className="relative flex h-2 w-2">
@@ -159,14 +163,14 @@ export default function Navbar() {
                   ></span>
                 </span>
                 <Database className="w-3.5 h-3.5 text-slate-400 hidden xs:inline" />
-                <span className="text-slate-300 font-mono text-[11px] hidden sm:inline">
+                <span className="text-slate-700 dark:text-slate-300 font-mono text-[11px] hidden sm:inline">
                   {dbHealth.connected ? 'MongoDB Live' : 'Connecting'}
                 </span>
               </button>
 
               {/* DB Status Popover */}
               {showDbInfo && (
-                <div className="absolute right-0 mt-2 w-80 rounded-2xl glass-card p-4 shadow-2xl z-50 border border-white/10">
+                <div className="absolute right-0 mt-2 w-80 rounded-2xl glass-card bg-white dark:bg-slate-950/95 p-4 shadow-2xl z-50 border border-slate-200 dark:border-white/10">
                   <div className="flex items-center justify-between pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
@@ -219,7 +223,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white transition-all"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? (
@@ -233,7 +237,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={refreshAll}
-              className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-white/10 text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Refresh Data & Aggregations"
             >
               <RefreshCw className="w-4 h-4" />

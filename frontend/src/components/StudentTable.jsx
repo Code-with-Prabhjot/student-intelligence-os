@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ArrowUpDown, 
   ArrowUp, 
@@ -13,7 +13,15 @@ import {
   ChevronRight, 
   AlertCircle,
   FileDown,
-  RotateCcw
+  RotateCcw,
+  Github,
+  ExternalLink,
+  Briefcase,
+  AlertTriangle,
+  CheckCircle2,
+  Stethoscope,
+  XCircle,
+  Users
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
@@ -40,6 +48,8 @@ export default function StudentTable() {
     openCreateDrawer,
     bulkDelete,
   } = useStudentContext();
+
+  const [tableTab, setTableTab] = useState('all'); // 'all', 'placement', 'risk', 'opensource'
 
   const handleSort = (column) => {
     if (filters.sortBy === column) {
@@ -80,22 +90,133 @@ export default function StudentTable() {
     }
   };
 
+  // RVCE Status Badge with distinction / condonation / NSAR glow
   const getAttendanceBadge = (attendance) => {
     if (attendance >= 85) {
-      return <span className="badge-safe px-2.5 py-1 rounded-full text-xs font-semibold">{attendance}% (Safe)</span>;
+      return (
+        <span className="badge-safe px-2.5 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+          <CheckCircle2 className="w-3 h-3" />
+          {attendance}% (SEE Eligible)
+        </span>
+      );
     }
     if (attendance >= 75) {
-      return <span className="badge-warning px-2.5 py-1 rounded-full text-xs font-semibold">{attendance}% (Warning)</span>;
+      return (
+        <span className="px-2.5 py-1 rounded-full text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 inline-flex items-center gap-1">
+          <CheckCircle2 className="w-3 h-3" />
+          {attendance}% (Compliant)
+        </span>
+      );
     }
-    return <span className="badge-critical px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-fit"><AlertCircle className="w-3 h-3" /> {attendance}% (Risk)</span>;
+    if (attendance >= 65) {
+      return (
+        <span className="badge-condonation px-2.5 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+          <Stethoscope className="w-3 h-3" />
+          {attendance}% (Condonation)
+        </span>
+      );
+    }
+    return (
+      <span className="badge-nsar px-2.5 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+        <XCircle className="w-3 h-3" />
+        {attendance}% (NSAR Detained)
+      </span>
+    );
   };
 
+  // Filter students based on Table Quick-Action Tab
+  const displayedStudents = students.filter((s) => {
+    if (tableTab === 'placement') {
+      return s.cgpa >= 8.5 && Boolean(s.githubUsername && s.githubUsername.trim());
+    }
+    if (tableTab === 'risk') {
+      return s.attendance < 75;
+    }
+    if (tableTab === 'opensource') {
+      return Boolean(s.githubUsername && s.githubUsername.trim());
+    }
+    return true;
+  });
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
       
+      {/* Quick-Action Sub Tabs */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl glass-panel border border-white/[0.08]">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setTableTab('all')}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              tableTab === 'all'
+                ? 'bg-blue-600 text-white shadow-glow-blue'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>All Students</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/10">
+              {students.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTableTab('placement')}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              tableTab === 'placement'
+                ? 'bg-purple-600 text-white shadow-glow-indigo'
+                : 'text-slate-400 hover:text-purple-300 hover:bg-slate-800'
+            }`}
+          >
+            <Briefcase className="w-3.5 h-3.5 text-purple-400" />
+            <span>Placement Eligible (Tier-1)</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/10">
+              {students.filter((s) => s.cgpa >= 8.5 && s.githubUsername).length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTableTab('risk')}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              tableTab === 'risk'
+                ? 'bg-rose-600 text-white shadow-glow-rose'
+                : 'text-slate-400 hover:text-rose-300 hover:bg-slate-800'
+            }`}
+          >
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+            <span>Attendance At-Risk</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/10">
+              {students.filter((s) => s.attendance < 75).length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTableTab('opensource')}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              tableTab === 'opensource'
+                ? 'bg-indigo-600 text-white shadow-glow-blue'
+                : 'text-slate-400 hover:text-indigo-300 hover:bg-slate-800'
+            }`}
+          >
+            <Github className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Open Source Contributors</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/10">
+              {students.filter((s) => s.githubUsername).length}
+            </span>
+          </button>
+        </div>
+
+        <span className="text-xs text-slate-400 px-3 hidden md:inline">
+          Showing {displayedStudents.length} of {students.length} filtered
+        </span>
+      </div>
+
       {/* Bulk Action Header Toolbar */}
       {selectedIds.length > 0 && (
-        <div className="mb-4 p-3 rounded-2xl glass-panel border border-blue-500/30 flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="p-3 rounded-2xl glass-panel border border-blue-500/30 flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
             <span className="text-xs sm:text-sm font-semibold text-white">
@@ -127,7 +248,7 @@ export default function StudentTable() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/[0.08] bg-slate-900/60 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-slate-200 dark:border-white/[0.08] bg-slate-100/95 dark:bg-slate-900/80 text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                 
                 {/* Select All Checkbox */}
                 <th className="py-4 px-4 w-12 text-center">
@@ -155,13 +276,13 @@ export default function StudentTable() {
                   </div>
                 </th>
 
-                {/* Name */}
+                {/* Name & Profiles */}
                 <th
                   onClick={() => handleSort('name')}
                   className="py-4 px-4 cursor-pointer group hover:text-white transition-colors"
                 >
                   <div className="flex items-center gap-1.5">
-                    <span>Student Identity</span>
+                    <span>Student Identity & GitHub</span>
                     {renderSortIcon('name')}
                   </div>
                 </th>
@@ -205,7 +326,7 @@ export default function StudentTable() {
                   className="py-4 px-4 cursor-pointer group hover:text-white transition-colors"
                 >
                   <div className="flex items-center gap-1.5">
-                    <span>Attendance</span>
+                    <span>RVCE Exam Standing</span>
                     {renderSortIcon('attendance')}
                   </div>
                 </th>
@@ -228,7 +349,7 @@ export default function StudentTable() {
                     </div>
                   </td>
                 </tr>
-              ) : students.length === 0 ? (
+              ) : displayedStudents.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="py-16 text-center">
                     <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
@@ -237,20 +358,20 @@ export default function StudentTable() {
                       </div>
                       <h4 className="text-base font-semibold text-white mb-1">No Students Found</h4>
                       <p className="text-xs text-slate-400 mb-4 text-center">
-                        No student records match your active search and filter constraints.
+                        No student records match the selected quick-action filter.
                       </p>
                       <button
                         type="button"
-                        onClick={openCreateDrawer}
+                        onClick={() => setTableTab('all')}
                         className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-glow-blue transition-all"
                       >
-                        Enroll First Student
+                        Reset to All Students
                       </button>
                     </div>
                   </td>
                 </tr>
               ) : (
-                students.map((student) => {
+                displayedStudents.map((student) => {
                   const isSelected = selectedIds.includes(student._id);
 
                   return (
@@ -280,7 +401,7 @@ export default function StudentTable() {
                         {student.usn}
                       </td>
 
-                      {/* Name & Avatar */}
+                      {/* Name, Avatar, & GitHub Launcher */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 shadow-sm flex-shrink-0">
@@ -288,14 +409,39 @@ export default function StudentTable() {
                           </div>
                           <div>
                             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                              <span>{student.name}</span>
+                              <span 
+                                onClick={() => openDetailModal(student)}
+                                className="cursor-pointer hover:text-blue-400 transition-colors"
+                              >
+                                {student.name}
+                              </span>
                               {student.cgpa >= 9.0 && (
                                 <span title="Distinction Scholar">
                                   <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 inline" />
                                 </span>
                               )}
                             </div>
-                            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{student.email}</span>
+                            
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                {student.email}
+                              </span>
+
+                              {/* GitHub Icon Link */}
+                              {student.githubUsername && (
+                                <a
+                                  href={`https://github.com/${student.githubUsername}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="inline-flex items-center gap-1 text-[10px] font-mono text-purple-400 hover:text-purple-300 hover:underline"
+                                  title={`Open GitHub: @${student.githubUsername}`}
+                                >
+                                  <Github className="w-3 h-3" />
+                                  <span>@{student.githubUsername}</span>
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -314,14 +460,14 @@ export default function StudentTable() {
 
                       {/* CGPA */}
                       <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           <span className={`font-bold text-sm ${student.cgpa >= 9.0 ? 'text-amber-600 dark:text-amber-400 font-extrabold' : student.cgpa >= 7.5 ? 'text-blue-600 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300'}`}>
                             {student.cgpa.toFixed(2)}
                           </span>
                         </div>
                       </td>
 
-                      {/* Attendance */}
+                      {/* Attendance & RVCE Standing */}
                       <td className="py-3 px-4">
                         {getAttendanceBadge(student.attendance)}
                       </td>
@@ -391,7 +537,7 @@ export default function StudentTable() {
         <div className="p-4 border-t border-slate-200 dark:border-white/[0.08] bg-slate-50/90 dark:bg-slate-900/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span>
-              Showing <span className="font-bold text-slate-900 dark:text-white">{students.length}</span> of{' '}
+              Showing <span className="font-bold text-slate-900 dark:text-white">{displayedStudents.length}</span> of{' '}
               <span className="font-bold text-slate-900 dark:text-white">{pagination.totalCount}</span> entries
             </span>
             <span className="text-slate-300 dark:text-slate-600">|</span>

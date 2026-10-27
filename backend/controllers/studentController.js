@@ -18,6 +18,9 @@ const initialSeed = [
     phone: '+91 98450 11021',
     section: 'A',
     mentor: 'Dr. B. S. Shylaja',
+    githubUsername: 'ananya-iyer',
+    leetcodeHandle: 'ananya_algo',
+    portfolioUrl: 'https://ananyaiyer.me',
     isDeleted: false,
     createdAt: new Date('2023-08-10'),
     updatedAt: new Date('2024-02-15'),
@@ -37,6 +40,9 @@ const initialSeed = [
     phone: '+91 98450 22032',
     section: 'A',
     mentor: 'Dr. B. S. Shylaja',
+    githubUsername: 'ananya-iyer',
+    leetcodeHandle: 'ananya_algo',
+    portfolioUrl: 'https://ananyaiyer.me',
     isDeleted: false,
     createdAt: new Date('2023-08-10'),
     updatedAt: new Date('2024-02-15'),
@@ -189,6 +195,9 @@ const initialSeed = [
     phone: '+91 98451 10213',
     section: 'A',
     mentor: 'Dr. B. S. Shylaja',
+    githubUsername: 'ananya-iyer',
+    leetcodeHandle: 'ananya_algo',
+    portfolioUrl: 'https://ananyaiyer.me',
     isDeleted: false,
     createdAt: new Date('2024-08-10'),
     updatedAt: new Date('2024-02-15'),
@@ -302,6 +311,7 @@ const getStudents = async (req, res) => {
     const {
       search = '',
       branch,
+      academicYear,
       semester,
       status,
       minCgpa,
@@ -334,10 +344,29 @@ const getStudents = async (req, res) => {
           { branch: searchRegex },
           { email: searchRegex },
           { skills: searchRegex },
+          { githubUsername: searchRegex },
+          { leetcodeHandle: searchRegex },
         ];
       }
 
-      if (branch && branch !== 'ALL') query.branch = branch.toUpperCase();
+      
+      // Academic Year Filter (batch digits 25, 24, 23, 22)
+      if (academicYear && academicYear !== 'ALL') {
+        let yr = academicYear.toString();
+        if (yr.includes('1') || yr.includes('25')) yr = '25';
+        else if (yr.includes('2') || yr.includes('24')) yr = '24';
+        else if (yr.includes('3') || yr.includes('23')) yr = '23';
+        else if (yr.includes('4') || yr.includes('22')) yr = '22';
+        query.usn = new RegExp(`^1(?:RV|RZ)${yr}`, 'i');
+      }
+
+      if (branch && branch !== 'ALL') {
+        if (branch.toUpperCase() === 'OTHERS') {
+          query.branch = { $nin: ['CSE', 'AIML', 'ISE', 'ECE', 'EEE', 'MECH', 'CIVIL'] };
+        } else {
+          query.branch = branch.toUpperCase();
+        }
+      }
       if (semester && semester !== 'ALL') query.semester = Number(semester);
       if (status && status !== 'ALL') query.status = status;
 
@@ -395,12 +424,32 @@ const getStudents = async (req, res) => {
         const matchesBranch = s.branch.toLowerCase().includes(term);
         const matchesEmail = s.email.toLowerCase().includes(term);
         const matchesSkills = (s.skills || []).some((sk) => sk.toLowerCase().includes(term));
-        if (!matchesUsn && !matchesName && !matchesBranch && !matchesEmail && !matchesSkills) {
+        const matchesGithub = (s.githubUsername || '').toLowerCase().includes(term);
+        const matchesLeetcode = (s.leetcodeHandle || '').toLowerCase().includes(term);
+        if (!matchesUsn && !matchesName && !matchesBranch && !matchesEmail && !matchesSkills && !matchesGithub && !matchesLeetcode) {
           return false;
         }
       }
 
-      if (branch && branch !== 'ALL' && s.branch !== branch.toUpperCase()) return false;
+      
+      // Academic Year Filter
+      if (academicYear && academicYear !== 'ALL') {
+        let yr = academicYear.toString();
+        if (yr.includes('1') || yr.includes('25')) yr = '25';
+        else if (yr.includes('2') || yr.includes('24')) yr = '24';
+        else if (yr.includes('3') || yr.includes('23')) yr = '23';
+        else if (yr.includes('4') || yr.includes('22')) yr = '22';
+        const batchMatch = s.usn.match(/^1(?:RV|RZ)(\d{2})/i);
+        if (!batchMatch || batchMatch[1] !== yr) return false;
+      }
+
+      if (branch && branch !== 'ALL') {
+        if (branch.toUpperCase() === 'OTHERS') {
+          if (['CSE', 'AIML', 'ISE', 'ECE', 'EEE', 'MECH', 'CIVIL'].includes(s.branch)) return false;
+        } else if (s.branch !== branch.toUpperCase()) {
+          return false;
+        }
+      }
       if (semester && semester !== 'ALL' && s.semester !== Number(semester)) return false;
       if (status && status !== 'ALL' && s.status !== status) return false;
 
@@ -485,17 +534,17 @@ const getStudentById = async (req, res) => {
 // @route   POST /api/students
 const createStudent = async (req, res) => {
   try {
-    const { usn, name, email, branch, semester, cgpa, attendance, status, skills, avatar, phone, section, mentor } = req.body;
+    const { usn, name, email, branch, semester, cgpa, attendance, status, skills, avatar, phone, section, mentor, githubUsername, leetcodeHandle, portfolioUrl } = req.body;
 
     const usnUpper = usn ? usn.toUpperCase().trim() : '';
     const emailLower = email ? email.toLowerCase().trim() : '';
-    const usnRegex = /^1RV\d{2}[A-Z]{2,3}\d{3}$/i;
+    const usnRegex = /^1(RV|RZ)\d{2}[A-Z]{2,3}\d{3}$/i;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!usnUpper || !usnRegex.test(usnUpper)) {
       return res.status(400).json({
         success: false,
-        message: 'USN must follow standard RVCE format (e.g., 1RV23CS001)',
+        message: 'USN must follow standard RVCE format (e.g., 1RV23CS001 or 1RZ25CS042)',
       });
     }
 
@@ -538,6 +587,9 @@ const createStudent = async (req, res) => {
         phone: phone || '+91 98765 43210',
         section: section || 'A',
         mentor: mentor || 'Dr. B. S. Shylaja',
+        githubUsername: (githubUsername || '').trim(),
+        leetcodeHandle: (leetcodeHandle || '').trim(),
+        portfolioUrl: (portfolioUrl || '').trim(),
         isDeleted: false,
       });
 
@@ -567,7 +619,10 @@ const createStudent = async (req, res) => {
       phone: phone || '+91 98765 43210',
       section: section || 'A',
       mentor: mentor || 'Dr. B. S. Shylaja',
-      isDeleted: false,
+        githubUsername: (githubUsername || '').trim(),
+        leetcodeHandle: (leetcodeHandle || '').trim(),
+        portfolioUrl: (portfolioUrl || '').trim(),
+        isDeleted: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -1022,6 +1077,9 @@ const bulkImportStudents = async (req, res) => {
             attendance: Number(item.attendance !== undefined ? item.attendance : existing.attendance),
             status: item.status || existing.status,
             skills: item.skills || existing.skills,
+            githubUsername: item.githubUsername !== undefined ? item.githubUsername : existing.githubUsername,
+            leetcodeHandle: item.leetcodeHandle !== undefined ? item.leetcodeHandle : existing.leetcodeHandle,
+            portfolioUrl: item.portfolioUrl !== undefined ? item.portfolioUrl : existing.portfolioUrl,
             isDeleted: false,
           });
           await existing.save();
@@ -1074,6 +1132,9 @@ const bulkImportStudents = async (req, res) => {
             phone: '+91 98765 43210',
             section: 'A',
             mentor: 'Dr. B. S. Shylaja',
+    githubUsername: 'ananya-iyer',
+    leetcodeHandle: 'ananya_algo',
+    portfolioUrl: 'https://ananyaiyer.me',
             isDeleted: false,
             createdAt: new Date(),
             updatedAt: new Date(),

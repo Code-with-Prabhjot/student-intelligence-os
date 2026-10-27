@@ -18,14 +18,21 @@ import {
   MessageSquare,
   Send,
   Calculator,
-  Building
+  Building,
+  Github,
+  ExternalLink,
+  Code2,
+  Globe,
+  Stethoscope,
+  XCircle,
+  Briefcase
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
 export default function StudentDetailModal() {
   const { isDetailModalOpen, detailStudent, closeDetailModal, openEditDrawer, showToast } = useStudentContext();
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'academics' | 'proctor'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'academics' | 'placement' | 'proctor'
   const [newNote, setNewNote] = useState('');
   const [proctorNotes, setProctorNotes] = useState(() => {
     return [
@@ -33,7 +40,7 @@ export default function StudentDetailModal() {
         id: 1,
         date: '2024-02-10',
         author: 'Dr. Proctor Officer',
-        text: 'Mid-semester performance review completed. Advised student on core course preparation and placement milestones.'
+        text: 'Mid-semester performance review completed. Advised student on core course preparation, open-source projects, and placement milestones.'
       }
     ];
   });
@@ -42,12 +49,11 @@ export default function StudentDetailModal() {
 
   const s = detailStudent;
 
-  // Calculate realistic semester progression up to student.semester
+  // Calculate semester SGPA progression
   const calculateSemesterHistory = (currentSem, finalCgpa) => {
     const history = [];
     const base = Math.max(5.5, finalCgpa - 0.4);
     for (let sem = 1; sem <= currentSem; sem++) {
-      // Small variation ending close to current CGPA
       const variation = Math.sin(sem * 1.5) * 0.35 + (sem / currentSem) * 0.4;
       const sgpa = Math.min(10, Math.max(5.0, Number((base + variation).toFixed(2))));
       history.push({ semester: sem, sgpa });
@@ -57,15 +63,76 @@ export default function StudentDetailModal() {
 
   const semHistory = calculateSemesterHistory(s.semester || 1, s.cgpa || 8.0);
 
-  // Attendance Deficit / Buffer Logic (Standard 60 class semester)
+  // Attendance Deficit & RVCE Regulations Logic
   const STANDARD_CLASSES = 60;
   const attendedClasses = Math.round(((s.attendance || 0) / 100) * STANDARD_CLASSES);
-  const isBelowCutoff = s.attendance < 75;
   
-  // Classes needed to reach 75%: (attended + X) / (total + X) = 0.75 => X = 3*total - 4*attended
-  const classesNeededFor75 = Math.max(0, Math.ceil(3 * STANDARD_CLASSES - 4 * attendedClasses));
-  // Missable classes before dropping below 75%: (attended) / (total + Y) = 0.75 => Y = (4/3)*attended - total
-  const classesMissable = Math.max(0, Math.floor((4 / 3) * attendedClasses - STANDARD_CLASSES));
+  // Consecutive classes needed to reach target:
+  const getNeededClasses = (target) => {
+    if (s.attendance >= target) return 0;
+    return Math.max(0, Math.ceil((target * STANDARD_CLASSES - 100 * attendedClasses) / (100 - target)));
+  };
+
+  // Safe missable classes (bunks) before dropping below target:
+  const getBunkBuffer = (target) => {
+    if (s.attendance < target) return 0;
+    return Math.max(0, Math.floor((100 * attendedClasses) / target - STANDARD_CLASSES));
+  };
+
+  const classesNeededFor75 = getNeededClasses(75);
+  const classesNeededFor85 = getNeededClasses(85);
+  const classesMissable75 = getBunkBuffer(75);
+  const classesMissable85 = getBunkBuffer(85);
+
+  // RVCE Autonomous Status
+  const getExamEligibility = (att) => {
+    if (att >= 85) {
+      return {
+        status: 'Eligible for SEE (Distinction)',
+        tier: 'safe',
+        badge: 'badge-safe text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+        icon: CheckCircle2,
+        action: 'Unconditional hall ticket eligibility granted.'
+      };
+    }
+    if (att >= 75) {
+      return {
+        status: 'Eligible for SEE',
+        tier: 'compliant',
+        badge: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+        icon: CheckCircle2,
+        action: 'Meets VTU 75% standard requirement.'
+      };
+    }
+    if (att >= 65) {
+      return {
+        status: 'Medical Condonation Required',
+        tier: 'condonation',
+        badge: 'badge-warning text-amber-300 bg-amber-500/15 border-amber-500/30',
+        icon: Stethoscope,
+        action: 'Barred unless formal medical petition approved by Principal.'
+      };
+    }
+    return {
+      status: 'Detained (NSAR)',
+      tier: 'nsar',
+      badge: 'badge-critical text-rose-300 bg-rose-500/20 border-rose-500/40',
+      icon: XCircle,
+      action: 'Not Satisfied Attendance Requirement. Barred from SEE. Must repeat course.'
+    };
+  };
+
+  const examStatus = getExamEligibility(s.attendance);
+
+  // Placement Readiness Evaluation
+  const isPlacementReady = s.cgpa >= 8.5 && Boolean(s.githubUsername && s.githubUsername.trim());
+  const placementTier = s.cgpa >= 9.0 && isPlacementReady
+    ? 'Tier-1 Super Dream (20+ LPA)'
+    : s.cgpa >= 8.5
+    ? 'Tier-1 Dream (10-20 LPA)'
+    : s.cgpa >= 7.5
+    ? 'Core Engineering (6-10 LPA)'
+    : 'Skill Accelerator Needed';
 
   const handleAddNote = (e) => {
     e.preventDefault();
@@ -96,7 +163,7 @@ export default function StudentDetailModal() {
       {/* Modal Dialog */}
       <div className="relative glass-card bg-slate-950/95 rounded-3xl max-w-2xl w-full p-5 sm:p-7 border border-white/10 shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[92vh]">
         
-        {/* Printable Official College Header (Visible during Print) */}
+        {/* Printable Official College Header */}
         <div className="hidden print:block text-center border-b-2 border-slate-900 pb-4 mb-4">
           <h2 className="text-xl font-bold tracking-tight text-black">R.V. COLLEGE OF ENGINEERING (RVCE)</h2>
           <p className="text-xs text-slate-600">Autonomous Institution affiliated to VTU &bull; Bengaluru - 560059</p>
@@ -122,7 +189,7 @@ export default function StudentDetailModal() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white">{s.name}</h3>
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                   {s.branch}
                 </span>
               </div>
@@ -157,8 +224,54 @@ export default function StudentDetailModal() {
           </div>
         </div>
 
+        {/* Developer Profiles Quick Launcher Ribbon */}
+        {(s.githubUsername || s.leetcodeHandle || s.portfolioUrl) && (
+          <div className="flex flex-wrap items-center gap-2 py-2.5 px-3 rounded-xl bg-slate-900/60 border border-white/5 my-3 text-xs flex-shrink-0">
+            <span className="text-slate-400 text-[11px] font-semibold mr-1">Profiles:</span>
+            
+            {s.githubUsername && (
+              <a
+                href={`https://github.com/${s.githubUsername}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white border border-purple-500/20 transition-colors font-mono text-[11px]"
+              >
+                <Github className="w-3.5 h-3.5 text-purple-400" />
+                <span>github.com/{s.githubUsername}</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
+              </a>
+            )}
+
+            {s.leetcodeHandle && (
+              <a
+                href={`https://leetcode.com/u/${s.leetcodeHandle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white border border-amber-500/20 transition-colors font-mono text-[11px]"
+              >
+                <Code2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>leetcode/{s.leetcodeHandle}</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
+              </a>
+            )}
+
+            {s.portfolioUrl && (
+              <a
+                href={s.portfolioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white border border-blue-500/20 transition-colors text-[11px]"
+              >
+                <Globe className="w-3.5 h-3.5 text-blue-400" />
+                <span>Portfolio</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
+              </a>
+            )}
+          </div>
+        )}
+
         {/* Modal Navigation Tabs */}
-        <div className="flex items-center gap-2 pt-3 pb-3 border-b border-white/5 flex-shrink-0 print:hidden text-xs">
+        <div className="flex items-center gap-2 pb-3 border-b border-white/5 flex-shrink-0 print:hidden text-xs">
           <button
             type="button"
             onClick={() => setActiveTab('overview')}
@@ -168,7 +281,19 @@ export default function StudentDetailModal() {
                 : 'text-slate-400 hover:text-white hover:bg-slate-900'
             }`}
           >
-            Overview
+            Overview & Exam Standing
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('placement')}
+            className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center gap-1.5 ${
+              activeTab === 'placement'
+                ? 'bg-purple-600 text-white'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
+            }`}
+          >
+            <Briefcase className="w-3.5 h-3.5" />
+            Placement Radar
           </button>
           <button
             type="button"
@@ -199,7 +324,7 @@ export default function StudentDetailModal() {
         {/* Scrollable Tab Body */}
         <div className="overflow-y-auto py-4 space-y-4 flex-1">
           
-          {/* TAB 1: OVERVIEW */}
+          {/* TAB 1: OVERVIEW & EXAM STANDING */}
           {activeTab === 'overview' && (
             <>
               {/* Score Meters */}
@@ -226,10 +351,8 @@ export default function StudentDetailModal() {
                   <div className="text-2xl font-extrabold text-white mt-1">
                     {s.attendance}%
                   </div>
-                  <span className={`text-[10px] font-semibold mt-1 block ${
-                    s.attendance >= 85 ? 'text-emerald-400' : s.attendance >= 75 ? 'text-amber-400' : 'text-rose-400'
-                  }`}>
-                    {s.attendance >= 75 ? 'VTU Compliant' : 'Barred from Exams'}
+                  <span className="text-[10px] font-semibold text-slate-400 mt-1 block">
+                    {attendedClasses} of {STANDARD_CLASSES} contact hours
                   </span>
                 </div>
 
@@ -253,35 +376,60 @@ export default function StudentDetailModal() {
                 </div>
               </div>
 
-              {/* VTU Deficit / Bunk Buffer Card */}
-              <div className={`p-4 rounded-2xl border text-xs ${
-                isBelowCutoff 
-                  ? 'bg-rose-950/20 border-rose-500/30 text-rose-200' 
-                  : 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200'
+              {/* RVCE SEE Eligibility & Simulation Banner */}
+              <div className={`p-4 rounded-2xl border text-xs space-y-2 ${
+                examStatus.tier === 'safe' || examStatus.tier === 'compliant'
+                  ? 'bg-emerald-950/20 border-emerald-500/30'
+                  : examStatus.tier === 'condonation'
+                  ? 'bg-amber-950/20 border-amber-500/30'
+                  : 'bg-rose-950/25 border-rose-500/40'
               }`}>
-                <div className="flex items-center gap-2 mb-1.5 font-bold">
-                  {isBelowCutoff ? (
-                    <>
-                      <AlertTriangle className="w-4 h-4 text-rose-400" />
-                      <span className="text-rose-300">VTU 75% Attendance Deficit Alert</span>
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span className="text-emerald-300">VTU 75% Exam Eligibility Confirmed</span>
-                    </>
-                  )}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <examStatus.icon className={`w-4 h-4 ${
+                      examStatus.tier === 'safe' || examStatus.tier === 'compliant' ? 'text-emerald-400' : examStatus.tier === 'condonation' ? 'text-amber-400' : 'text-rose-400'
+                    }`} />
+                    <span className="font-extrabold text-sm text-white">
+                      RVCE SEE Exam Standing:
+                    </span>
+                  </div>
+                  <span className={`px-2.5 py-0.5 rounded-full font-bold text-xs border ${examStatus.badge}`}>
+                    {examStatus.status}
+                  </span>
                 </div>
-                {isBelowCutoff ? (
-                  <p className="leading-relaxed text-[11px] text-rose-200/90">
-                    Student has missed {STANDARD_CLASSES - attendedClasses} out of {STANDARD_CLASSES} contact hours. 
-                    Must attend <strong>{classesNeededFor75}</strong> consecutive classes without missing any to restore eligibility before semester end.
-                  </p>
-                ) : (
-                  <p className="leading-relaxed text-[11px] text-emerald-200/90">
-                    Student is safely above the VTU cutoff. Can safely miss up to <strong>{classesMissable}</strong> classes without falling below 75%.
-                  </p>
-                )}
+
+                <p className="text-slate-300 text-[11px] leading-relaxed">
+                  {examStatus.action}
+                </p>
+
+                {/* Exact Deficit & Buffer Math */}
+                <div className="pt-2 border-t border-white/5 grid grid-cols-2 gap-3 text-[11px]">
+                  <div>
+                    <span className="text-slate-400 block">75% Mandatory Cutoff:</span>
+                    {s.attendance < 75 ? (
+                      <span className="text-rose-400 font-bold">
+                        Must attend +{classesNeededFor75} consecutive classes
+                      </span>
+                    ) : (
+                      <span className="text-emerald-400 font-bold">
+                        Safe to miss {classesMissable75} classes
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <span className="text-slate-400 block">85% Distinction Threshold:</span>
+                    {s.attendance < 85 ? (
+                      <span className="text-amber-400 font-bold">
+                        Must attend +{classesNeededFor85} consecutive classes
+                      </span>
+                    ) : (
+                      <span className="text-emerald-400 font-bold">
+                        Safe to miss {classesMissable85} classes
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Faculty Mentor & Contacts */}
@@ -324,7 +472,7 @@ export default function StudentDetailModal() {
                     {s.skills.map((skill, i) => (
                       <span
                         key={i}
-                        className="px-2.5 py-1 rounded-xl bg-slate-900 border border-white/10 text-[11px] text-slate-300"
+                        className="px-2.5 py-1 rounded-xl bg-slate-900 border border-white/10 text-[11px] text-slate-300 font-medium"
                       >
                         {skill}
                       </span>
@@ -335,7 +483,59 @@ export default function StudentDetailModal() {
             </>
           )}
 
-          {/* TAB 2: SGPA PROGRESSION */}
+          {/* TAB 2: PLACEMENT RADAR */}
+          {activeTab === 'placement' && (
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-slate-900/70 border border-white/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h5 className="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <Briefcase className="w-4 h-4 text-purple-400" /> Placement Eligibility Tier
+                  </h5>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold badge-tier1">
+                    {placementTier}
+                  </span>
+                </div>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between py-1.5 border-b border-white/5">
+                    <span className="text-slate-400">CGPA Requirement (&ge; 8.5):</span>
+                    <span className={`font-mono font-bold ${s.cgpa >= 8.5 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {s.cgpa >= 8.5 ? '✓ Satisfied' : '✗ Below 8.5 Cutoff'} ({s.cgpa.toFixed(2)})
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-1.5 border-b border-white/5">
+                    <span className="text-slate-400">Open-Source & GitHub Profile:</span>
+                    <span className={`font-mono font-bold ${s.githubUsername ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {s.githubUsername ? `✓ Linked (@${s.githubUsername})` : '✗ Missing GitHub'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-1.5 border-b border-white/5">
+                    <span className="text-slate-400">LeetCode Problem Solving:</span>
+                    <span className={`font-mono font-bold ${s.leetcodeHandle ? 'text-emerald-400' : 'text-slate-400'}`}>
+                      {s.leetcodeHandle ? `✓ Linked (${s.leetcodeHandle})` : 'Not Provided'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-1.5">
+                    <span className="text-slate-400">Attendance Examination Clearance:</span>
+                    <span className={`font-mono font-bold ${s.attendance >= 75 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {s.attendance >= 75 ? '✓ Compliant' : '✗ At Risk'} ({s.attendance}%)
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/20 text-xs text-purple-200/90 leading-relaxed">
+                <p>
+                  Tier-1 campus recruiters (Google, Microsoft, Cisco, Atlassian) require candidates with high CGPA backed by verified GitHub engineering footprints. Students lacking public repositories are advised to complete faculty-guided Capstone repositories before interview rounds.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: SGPA PROGRESSION */}
           {activeTab === 'academics' && (
             <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/5">
@@ -384,7 +584,7 @@ export default function StudentDetailModal() {
             </div>
           )}
 
-          {/* TAB 3: PROCTOR COUNSELLING */}
+          {/* TAB 4: PROCTOR COUNSELLING */}
           {activeTab === 'proctor' && (
             <div className="space-y-4">
               {/* Add Note Form */}
@@ -397,7 +597,7 @@ export default function StudentDetailModal() {
                     type="text"
                     value={newNote}
                     onChange={(e) => setNewNote(e.target.value)}
-                    placeholder="Enter counselling notes (attendance, IA marks, academic advice)..."
+                    placeholder="Enter counselling notes (attendance, IA marks, placement advice)..."
                     className="flex-1 glass-input rounded-xl px-3 py-2 text-xs"
                   />
                   <button
@@ -430,7 +630,7 @@ export default function StudentDetailModal() {
         {/* Footer Actions */}
         <div className="pt-3 border-t border-white/10 flex items-center justify-between flex-shrink-0 print:hidden">
           <span className="text-[11px] text-slate-500 font-mono">
-            {s.usn} &bull; DB Verified
+            {s.usn} &bull; RVCE Verified Record
           </span>
           <div className="flex items-center gap-2">
             <button

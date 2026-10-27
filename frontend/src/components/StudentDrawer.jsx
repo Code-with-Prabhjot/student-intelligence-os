@@ -39,6 +39,9 @@ export default function StudentDrawer() {
     phone: '+91 98765 43210',
     section: 'A',
     mentor: 'Dr. B. S. Shylaja',
+    githubUsername: '',
+    leetcodeHandle: '',
+    portfolioUrl: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -59,6 +62,9 @@ export default function StudentDrawer() {
         phone: activeStudent.phone || '+91 98765 43210',
         section: activeStudent.section || 'A',
         mentor: activeStudent.mentor || 'Dr. B. S. Shylaja',
+        githubUsername: activeStudent.githubUsername || '',
+        leetcodeHandle: activeStudent.leetcodeHandle || '',
+        portfolioUrl: activeStudent.portfolioUrl || '',
       });
     } else {
       setFormData({
@@ -74,6 +80,9 @@ export default function StudentDrawer() {
         phone: '+91 98765 43210',
         section: 'A',
         mentor: 'Dr. B. S. Shylaja',
+        githubUsername: '',
+        leetcodeHandle: '',
+        portfolioUrl: '',
       });
     }
     setErrors({});
@@ -83,13 +92,13 @@ export default function StudentDrawer() {
 
   const validate = () => {
     const newErrors = {};
-    const usnPattern = /^1RV\d{2}[A-Z]{2,3}\d{3}$/i;
+    const usnPattern = /^1(RV|RZ)\d{2}[A-Z]{2,3}\d{3}$/i;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.usn.trim()) {
       newErrors.usn = 'USN is required';
     } else if (!usnPattern.test(formData.usn.trim())) {
-      newErrors.usn = 'Must follow RVCE format (e.g., 1RV23CS001)';
+      newErrors.usn = 'Must follow RVCE format (e.g., 1RV23CS001 or 1RZ25CS042)';
     }
 
     if (!formData.name.trim()) {
@@ -444,6 +453,60 @@ export default function StudentDrawer() {
               <p className="text-[11px] text-slate-500 mt-1">
                 Enter skills separated by commas to power skill telemetry on the dashboard.
               </p>
+            </div>
+
+            {/* Placement Readiness & Developer Footprint */}
+            <div className="space-y-4 pt-2 border-t border-white/5">
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-400 block">
+                Open-Source & Placement Readiness
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    GitHub Handle
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-slate-500 text-xs font-mono">@</span>
+                    <input
+                      type="text"
+                      name="githubUsername"
+                      value={formData.githubUsername}
+                      onChange={handleChange}
+                      placeholder="octocat"
+                      className="w-full pl-7 pr-3 py-2.5 rounded-xl glass-input font-mono text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    LeetCode Username
+                  </label>
+                  <input
+                    type="text"
+                    name="leetcodeHandle"
+                    value={formData.leetcodeHandle}
+                    onChange={handleChange}
+                    placeholder="e.g. coder_rvce"
+                    className="w-full px-3.5 py-2.5 rounded-xl glass-input font-mono text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Portfolio / Personal Website URL
+                </label>
+                <input
+                  type="url"
+                  name="portfolioUrl"
+                  value={formData.portfolioUrl}
+                  onChange={handleChange}
+                  placeholder="https://studentname.dev"
+                  className="w-full px-3.5 py-2.5 rounded-xl glass-input text-sm"
+                />
+              </div>
             </div>
 
             {/* Mentor & Contact */}

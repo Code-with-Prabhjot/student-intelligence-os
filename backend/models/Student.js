@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-// RVCE USN Format regex: e.g., 1RV20CS001, 1RV23AI045, 1RV22EC102
-const usnRegex = /^1RV\d{2}[A-Z]{2,3}\d{3}$/i;
+// RVCE USN Format regex: supports both 1RV and 1RZ prefixes (e.g., 1RV23CS001, 1RZ25CS042)
+const usnRegex = /^1(RV|RZ)\d{2}[A-Z]{2,3}\d{3}$/i;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const studentSchema = new mongoose.Schema(
@@ -12,7 +12,7 @@ const studentSchema = new mongoose.Schema(
       unique: true,
       uppercase: true,
       trim: true,
-      match: [usnRegex, 'USN must follow standard RVCE format (e.g., 1RV23CS001)'],
+      match: [usnRegex, 'USN must follow standard RVCE format (e.g., 1RV23CS001 or 1RZ25CS042)'],
       index: true,
     },
     name: {
@@ -118,6 +118,21 @@ const studentSchema = new mongoose.Schema(
       trim: true,
       default: 'Dr. K. N. Subramanya',
     },
+    githubUsername: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    leetcodeHandle: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    portfolioUrl: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -144,6 +159,26 @@ studentSchema.virtual('performanceTier').get(function () {
   if (this.cgpa >= 7.5) return 'First Class';
   if (this.cgpa >= 6.0) return 'Second Class';
   return 'Pass Class';
+});
+
+// Virtual property: Academic Year derived from batch digits (25 -> 1st Year, 24 -> 2nd Year, etc.)
+studentSchema.virtual('academicYear').get(function () {
+  if (!this.usn) return 'Unknown Year';
+  const match = this.usn.match(/^1(?:RV|RZ)(\d{2})/i);
+  if (!match) return 'Unknown Year';
+  const yearCode = parseInt(match[1], 10);
+  if (yearCode === 25) return '1st Year';
+  if (yearCode === 24) return '2nd Year';
+  if (yearCode === 23) return '3rd Year';
+  if (yearCode === 22) return '4th Year';
+  return `${yearCode} Batch`;
+});
+
+// Virtual property: Batch Year (e.g., 2025, 2024, etc.)
+studentSchema.virtual('batchYear').get(function () {
+  if (!this.usn) return '';
+  const match = this.usn.match(/^1(?:RV|RZ)(\d{2})/i);
+  return match ? `20${match[1]}` : '';
 });
 
 // Auto-update status if attendance is critical

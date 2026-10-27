@@ -8,6 +8,7 @@ const HEALTH_URL = '/api/health';
 
 const initialFilters = {
   branch: 'ALL',
+  academicYear: 'ALL',
   semester: 'ALL',
   status: 'ALL',
   minCgpa: '',
@@ -308,7 +309,7 @@ export const StudentProvider = ({ children }) => {
         showToast('Exported JSON successfully', 'success');
       } else {
         // Generate CSV
-        const headers = ['USN', 'Name', 'Email', 'Branch', 'Semester', 'CGPA', 'Attendance', 'Status', 'Skills', 'Phone', 'Section', 'Mentor'];
+        const headers = ['USN', 'Name', 'Email', 'Branch', 'Semester', 'CGPA', 'Attendance', 'Status', 'GitHub', 'LeetCode', 'Skills', 'Phone', 'Section', 'Mentor'];
         const rows = records.map((s) => [
           s.usn,
           `"${s.name.replace(/"/g, '""')}"`,
@@ -318,6 +319,8 @@ export const StudentProvider = ({ children }) => {
           s.cgpa,
           s.attendance,
           s.status,
+          s.githubUsername || '',
+          s.leetcodeHandle || '',
           `"${(s.skills || []).join(', ')}"`,
           s.phone || '',
           s.section || 'A',
@@ -329,7 +332,7 @@ export const StudentProvider = ({ children }) => {
         const url = URL.createObjectURL(csvBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `RVCE_Students_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.download = `RVCE_Student_Data_${new Date().toISOString().slice(0, 10)}.csv`;
         a.click();
         URL.revokeObjectURL(url);
         showToast('Exported CSV spreadsheet successfully', 'success');
