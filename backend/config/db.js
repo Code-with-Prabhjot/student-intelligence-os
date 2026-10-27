@@ -1,4 +1,12 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const mongoose = require('mongoose');
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+  // ignore
+}
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/rvce_student_db';
 
@@ -9,7 +17,7 @@ const connectDB = async () => {
     console.log(`[Database] Attempting connection to MongoDB at: ${MONGO_URI}`);
     
     const conn = await mongoose.connect(MONGO_URI, {
-      serverSelectionTimeoutMS: 2500, // Quick check
+      serverSelectionTimeoutMS: 8000,
     });
 
     isConnected = true;
@@ -18,11 +26,12 @@ const connectDB = async () => {
     console.log('╠═══════════════════════════════════════════════════════════════════╣');
     console.log(`║  \x1b[32m✔ Host:\x1b[0m             ${conn.connection.host.padEnd(46)}║`);
     console.log(`║  \x1b[36m✔ Database:\x1b[0m         ${conn.connection.name.padEnd(46)}║`);
-    console.log(`║  \x1b[33m✔ Compass URI:\x1b[0m      ${MONGO_URI.padEnd(46)}║`);
+    console.log(`║  \x1b[33m✔ Target URI:\x1b[0m       ${MONGO_URI.substring(0, 46).padEnd(46)}║`);
     console.log('╚═══════════════════════════════════════════════════════════════════╝\n');
     return conn;
   } catch (err) {
     isConnected = false;
+    console.warn(`[Database Error] ${err.message}`);
     console.warn('\n╔═══════════════════════════════════════════════════════════════════╗');
     console.warn('║                     MONGODB CONNECTION NOTICE                     ║');
     console.warn('╠═══════════════════════════════════════════════════════════════════╣');

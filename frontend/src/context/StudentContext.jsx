@@ -55,6 +55,27 @@ export const StudentProvider = ({ children }) => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
+  // Theme state: 'dark' | 'light'
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('rvce_theme') || 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('rvce_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  }, []);
+
   // Database Connection Health State
   const [dbHealth, setDbHealth] = useState({
     connected: false,
@@ -437,6 +458,8 @@ export const StudentProvider = ({ children }) => {
     toast,
     showToast,
     hideToast,
+    theme,
+    toggleTheme,
   };
 
   return <StudentContext.Provider value={value}>{children}</StudentContext.Provider>;

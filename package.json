@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Student Intelligence & Academic Lifecycle Management System (RVCE)",
   "scripts": {
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"npm run backend\" \"npm run frontend\"",
     "seed": "npm run seed --prefix backend",
     "backend": "npm start --prefix backend",
     "frontend": "npm run dev --prefix frontend",
@@ -20,5 +21,8 @@
     "tailwind"
   ],
   "author": "RVCE Engineering Architecture Team",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
 }

@@ -341,14 +341,18 @@ const getStudents = async (req, res) => {
       if (semester && semester !== 'ALL') query.semester = Number(semester);
       if (status && status !== 'ALL') query.status = status;
 
-      if (minCgpa !== undefined || maxCgpa !== undefined) {
+      const hasMinCgpa = minCgpa !== undefined && minCgpa !== '';
+      const hasMaxCgpa = maxCgpa !== undefined && maxCgpa !== '';
+      if (hasMinCgpa || hasMaxCgpa) {
         query.cgpa = {};
-        if (minCgpa !== undefined && minCgpa !== '') query.cgpa.$gte = Number(minCgpa);
-        if (maxCgpa !== undefined && maxCgpa !== '') query.cgpa.$lte = Number(maxCgpa);
+        if (hasMinCgpa) query.cgpa.$gte = Number(minCgpa);
+        if (hasMaxCgpa) query.cgpa.$lte = Number(maxCgpa);
       }
 
-      if (attendanceRisk === 'true' || attendanceRisk === true) {
+      if (attendanceRisk === 'true' || attendanceRisk === 'critical') {
         query.attendance = { $lt: 75 };
+      } else if (attendanceRisk === 'warning') {
+        query.attendance = { $gte: 75, $lt: 85 };
       }
 
       const sortOptions = {};
@@ -403,7 +407,8 @@ const getStudents = async (req, res) => {
       if (minCgpa !== undefined && minCgpa !== '' && s.cgpa < Number(minCgpa)) return false;
       if (maxCgpa !== undefined && maxCgpa !== '' && s.cgpa > Number(maxCgpa)) return false;
 
-      if (attendanceRisk === 'true' && s.attendance >= 75) return false;
+      if ((attendanceRisk === 'true' || attendanceRisk === 'critical') && s.attendance >= 75) return false;
+      if (attendanceRisk === 'warning' && (s.attendance < 75 || s.attendance >= 85)) return false;
 
       return true;
     });

@@ -17,6 +17,13 @@ import {
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
+const getInitials = (name) => {
+  if (!name) return 'ST';
+  const parts = name.trim().split(' ');
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
 export default function StudentTable() {
   const {
     students,
@@ -269,28 +276,26 @@ export default function StudentTable() {
                       </td>
 
                       {/* USN */}
-                      <td className="py-3 px-4 font-mono font-bold text-xs text-blue-400 tracking-wider">
+                      <td className="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 tracking-wider">
                         {student.usn}
                       </td>
 
                       {/* Name & Avatar */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={student.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${student.name}`}
-                            alt={student.name}
-                            className="w-9 h-9 rounded-xl bg-slate-800 border border-white/10 object-cover flex-shrink-0"
-                          />
+                          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 shadow-sm flex-shrink-0">
+                            {getInitials(student.name)}
+                          </div>
                           <div>
-                            <div className="font-semibold text-slate-100 flex items-center gap-1.5">
+                            <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                               <span>{student.name}</span>
                               {student.cgpa >= 9.0 && (
                                 <span title="Distinction Scholar">
-                                  <Sparkles className="w-3.5 h-3.5 text-amber-400 inline" />
+                                  <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 inline" />
                                 </span>
                               )}
                             </div>
-                            <span className="text-xs text-slate-400">{student.email}</span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{student.email}</span>
                           </div>
                         </div>
                       </td>
@@ -303,14 +308,14 @@ export default function StudentTable() {
                       </td>
 
                       {/* Semester */}
-                      <td className="py-3 px-4 text-center font-semibold text-slate-300">
+                      <td className="py-3 px-4 text-center font-semibold text-slate-700 dark:text-slate-300">
                         Sem {student.semester}
                       </td>
 
                       {/* CGPA */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <span className={`font-bold text-sm ${student.cgpa >= 9.0 ? 'text-amber-400 font-extrabold' : student.cgpa >= 7.5 ? 'text-blue-300' : 'text-slate-300'}`}>
+                          <span className={`font-bold text-sm ${student.cgpa >= 9.0 ? 'text-amber-600 dark:text-amber-400 font-extrabold' : student.cgpa >= 7.5 ? 'text-blue-600 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300'}`}>
                             {student.cgpa.toFixed(2)}
                           </span>
                         </div>
@@ -383,19 +388,19 @@ export default function StudentTable() {
         </div>
 
         {/* Pagination Bar */}
-        <div className="p-4 border-t border-white/[0.08] bg-slate-900/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+        <div className="p-4 border-t border-slate-200 dark:border-white/[0.08] bg-slate-50/90 dark:bg-slate-900/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span>
-              Showing <span className="font-semibold text-white">{students.length}</span> of{' '}
-              <span className="font-semibold text-white">{pagination.totalCount}</span> entries
+              Showing <span className="font-bold text-slate-900 dark:text-white">{students.length}</span> of{' '}
+              <span className="font-bold text-slate-900 dark:text-white">{pagination.totalCount}</span> entries
             </span>
-            <span className="text-slate-600">|</span>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
             <div className="flex items-center gap-1.5">
               <span>Per page:</span>
               <select
                 value={filters.limit}
                 onChange={(e) => setFilter('limit', Number(e.target.value))}
-                className="bg-slate-800 border border-white/10 rounded-lg px-2 py-1 text-slate-200 text-xs focus:outline-none"
+                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-lg px-2.5 py-1 text-slate-800 dark:text-slate-200 text-xs focus:outline-none shadow-sm"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
@@ -406,14 +411,14 @@ export default function StudentTable() {
 
           <div className="flex items-center gap-2">
             <span className="mr-2">
-              Page <span className="font-semibold text-white">{pagination.currentPage}</span> of{' '}
-              <span className="font-semibold text-white">{pagination.totalPages}</span>
+              Page <span className="font-bold text-slate-900 dark:text-white">{pagination.currentPage}</span> of{' '}
+              <span className="font-bold text-slate-900 dark:text-white">{pagination.totalPages}</span>
             </span>
             <button
               type="button"
               disabled={!pagination.hasPrevPage}
               onClick={() => setFilter('page', pagination.currentPage - 1)}
-              className="p-1.5 rounded-lg bg-slate-800 border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-700 text-slate-200 transition-colors"
+              className="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -421,7 +426,7 @@ export default function StudentTable() {
               type="button"
               disabled={!pagination.hasNextPage}
               onClick={() => setFilter('page', pagination.currentPage + 1)}
-              className="p-1.5 rounded-lg bg-slate-800 border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-700 text-slate-200 transition-colors"
+              className="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

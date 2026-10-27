@@ -34,8 +34,15 @@ export default function StudentCard({ student }) {
     }
   };
 
+  const getInitials = (name) => {
+    if (!name) return 'ST';
+    const parts = name.trim().split(' ');
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+
   return (
-    <div className="glass-card rounded-2xl overflow-hidden p-5 flex flex-col justify-between group transition-all duration-300 relative border border-white/[0.08] hover:border-blue-500/30">
+    <div className="glass-card rounded-2xl overflow-hidden p-5 flex flex-col justify-between group transition-all duration-300 relative border border-slate-200 dark:border-white/[0.08] hover:border-blue-500/30">
       
       {/* Top Banner Accent Glow */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 opacity-80 group-hover:opacity-100 transition-opacity"></div>
@@ -45,11 +52,9 @@ export default function StudentCard({ student }) {
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <img
-                src={student.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${student.name}`}
-                alt={student.name}
-                className="w-12 h-12 rounded-2xl bg-slate-800 border border-white/10 object-cover shadow-md"
-              />
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 font-bold text-sm flex items-center justify-center shadow-md">
+                {getInitials(student.name)}
+              </div>
               {student.cgpa >= 9.0 && (
                 <div className="absolute -top-1.5 -right-1.5 p-1 rounded-full bg-amber-500 text-black shadow-lg">
                   <Sparkles className="w-2.5 h-2.5" />
@@ -59,11 +64,11 @@ export default function StudentCard({ student }) {
 
             <div>
               <div className="flex items-center gap-1.5">
-                <h4 className="font-bold text-white text-base group-hover:text-blue-300 transition-colors">
+                <h4 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
                   {student.name}
                 </h4>
               </div>
-              <span className="font-mono text-xs font-semibold text-blue-400 block tracking-wider">
+              <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 block tracking-wider">
                 {student.usn}
               </span>
             </div>

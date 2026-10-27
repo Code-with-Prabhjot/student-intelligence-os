@@ -12,7 +12,9 @@ import {
   Copy, 
   ExternalLink,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
@@ -29,7 +31,9 @@ export default function Navbar() {
     setViewMode,
     isCommandPaletteOpen,
     setIsCommandPaletteOpen,
-    showToast
+    showToast,
+    theme,
+    toggleTheme
   } = useStudentContext();
 
   const [copied, setCopied] = useState(false);
@@ -210,6 +214,20 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+
+            {/* Theme Toggle Button (Light / Dark) */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white transition-all"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400 animate-in spin-in-180 duration-300" />
+              ) : (
+                <Moon className="w-4 h-4 text-blue-500 animate-in spin-in-180 duration-300" />
+              )}
+            </button>
 
             {/* Refresh Button */}
             <button

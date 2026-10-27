@@ -90,3 +90,140 @@
   color: #fb7185;
   border: 1px solid rgba(244, 63, 94, 0.28);
 }
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .glass-card, .glass-panel {
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    color: black !important;
+  }
+}
+
+/* LIGHT MODE STYLING */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 85% 25%, rgba(99, 102, 241, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+  color: #0f172a;
+}
+
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+html.light .glass-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+}
+
+html.light .glass-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
+}
+
+html.light .glass-input {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+html.light .glass-input:focus {
+  background: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+html.light .text-white,
+html.light .text-slate-100,
+html.light .text-slate-50 {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-200,
+html.light .text-slate-300 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-400 {
+  color: #64748b !important;
+}
+
+html.light .bg-slate-950,
+html.light .bg-slate-950\/95,
+html.light .bg-slate-900,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/30 {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/40 {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+}
+
+html.light .border-white\/10,
+html.light .border-white\/5,
+html.light .border-white\/\[0\.08\] {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e8f0 !important;
+}
+
+html.light select,
+html.light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light table thead {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light table tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Light mode badge styles */
+html.light .badge-safe {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+html.light .badge-warning {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+}
+
+html.light .badge-critical {
+  background: #fff1f2 !important;
+  color: #be123c !important;
+  border: 1px solid #fecdd3 !important;
+}
+
