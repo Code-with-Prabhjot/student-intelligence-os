@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { 
   X, 
   Sparkles, 
@@ -108,7 +108,7 @@ export default function StudentDetailModal() {
   };
 
   // Autonomous Proctor Advisory Heuristics Engine
-  const proctorAdvisories = useMemo(() => {
+  const proctorAdvisories = (() => {
     const advisories = [];
     const hasGithub = Boolean(s.githubUsername && s.githubUsername.trim());
     const isHighCgpa = s.cgpa >= 8.5;
@@ -176,7 +176,7 @@ export default function StudentDetailModal() {
     }
 
     return advisories;
-  }, [s]);
+  })();
 
   // Copy Official Proctor Memo to Clipboard
   const copyOfficialProctorMemo = () => {

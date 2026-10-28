@@ -267,7 +267,7 @@ function DirectoryView() {
     if (analytics?.semesterStats) {
       const getSum = (sems) => 
         analytics.semesterStats
-          .filter((s) => sems.includes(s._id))
+          .filter((s) => sems.includes(Number(String(s.semester).replace(/\D/g, ''))))
           .reduce((acc, curr) => acc + curr.count, 0);
       return {
         ALL: analytics.summary?.totalStudents || 100,

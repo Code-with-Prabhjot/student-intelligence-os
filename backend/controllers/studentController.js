@@ -1,6 +1,8 @@
 const Student = require('../models/Student');
 const mongoose = require('mongoose');
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Fallback in-memory dataset initialized with 15 realistic RVCE profiles
 const initialSeed = [
   {
@@ -352,7 +354,7 @@ const getStudents = async (req, res) => {
       }
 
       if (search.trim()) {
-        const searchRegex = new RegExp(search.trim(), 'i');
+        const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
         query.$or = [
           { usn: searchRegex },
           { name: searchRegex },
