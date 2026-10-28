@@ -67,16 +67,20 @@ The backend server is explicitly configured for **MongoDB Compass**.
 
 ## 🚀 Quickstart Guide
 
-### 1. Seed the Database (15 realistic RVCE profiles)
+### 1. Configure MongoDB
+
+Copy `backend/.env.example` to `backend/.env` and set `MONGO_URI` to either your local MongoDB instance or Atlas connection string. The repository ignores `.env`, so credentials are never committed. For Atlas, ensure the cluster's Network Access rules allow your current IP address.
+
+### 2. Seed the Database (100 realistic RVCE profiles)
 From the project root:
 ```bash
 npm run seed
 ```
 *(Or navigate to `/backend` and run `npm run seed`)*
 
-This creates 15 authentic RVCE student records across **CSE, AIML, ISE, ECE, EEE, MECH, CIVIL, BIOTECH, AEROSPACE, and CHEMICAL**.
+This creates 100 authentic RVCE student records across **CSE, AIML, ISE, ECE, EEE, MECH, CIVIL, BIOTECH, AEROSPACE, and CHEMICAL**.
 
-### 2. Start the Backend API Server
+### 3. Start the Backend API Server
 ```bash
 npm run backend
 ```
@@ -84,7 +88,7 @@ npm run backend
 - Server runs at: `http://localhost:5000`
 - API Health Check: `http://localhost:5000/api/health`
 
-### 3. Start the Frontend Application
+### 4. Start the Frontend Application
 In a separate terminal:
 ```bash
 npm run frontend
