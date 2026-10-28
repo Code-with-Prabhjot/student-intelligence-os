@@ -53,7 +53,8 @@ export default function LandingPage({ onLaunchApp }) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col justify-between selection:bg-blue-500/20">
+    <div className="min-h-screen w-full overflow-y-auto flex flex-col justify-between selection:bg-blue-500/20 relative">
+      <NetworkCanvas className="pointer-events-none fixed inset-0 z-0 opacity-30" />
       
       {/* Top Showcase Navigation Bar */}
       <nav className="sticky top-0 z-40 w-full glass-panel border-b border-slate-200 dark:border-white/[0.08] bg-white/80 dark:bg-[#090d16]/80 backdrop-blur-xl">

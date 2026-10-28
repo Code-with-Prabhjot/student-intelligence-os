@@ -1,25 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Search,
-  Bell,
-  Plus,
   RefreshCw,
-  Command,
   LayoutGrid,
-  TableProperties,
-  ChevronRight,
-  Home
+  TableProperties
 } from 'lucide-react';
 import { useStudentContext } from '../context/StudentContext';
 
 const TAB_LABELS = {
-  overview: 'Overview',
+  overview: 'Executive Overview',
   directory: 'Student Directory',
   enroll: 'Enroll Student',
   records: 'Academic Records',
-  analytics: 'Analytics',
-  placement: 'Placement Radar',
-  radar: 'Risk Radar',
+  analytics: 'Institutional Analytics',
+  placement: 'Tier-1 Placement Radar',
+  radar: 'CIE & Attendance Risk Radar',
   performers: 'Top Performers',
   export: 'Export Data',
   portal: 'Showcase Portal',
@@ -28,11 +22,8 @@ const TAB_LABELS = {
 
 export default function Topbar({ activeTab }) {
   const {
-    searchTerm, setSearchTerm,
     fetchStudents, fetchAnalytics, checkDbHealth,
-    openCreateDrawer,
     viewMode, setViewMode,
-    setIsCommandPaletteOpen,
     showToast,
   } = useStudentContext();
 
@@ -40,51 +31,37 @@ export default function Topbar({ activeTab }) {
     fetchStudents();
     fetchAnalytics();
     checkDbHealth();
-    showToast('Dashboard refreshed', 'info');
+    showToast('Dashboard metrics refreshed', 'info');
   };
 
   return (
     <header
-      className="topbar-surface sticky top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 border-b border-white/[0.06]"
-      style={{ backdropFilter: 'blur(20px)' }}
+      className="topbar-surface sticky top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 border-b border-slate-200 dark:border-white/[0.06] bg-white/90 dark:bg-[var(--bg-topbar)] backdrop-blur-xl transition-colors"
     >
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-sm text-slate-400 min-w-0">
-        <Home className="w-3.5 h-3.5 flex-shrink-0" />
-        <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-slate-600" />
-        <span className="text-slate-500">RVCE</span>
-        <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-slate-600" />
-        <span className="font-semibold text-white truncate">{TAB_LABELS[activeTab] || 'Dashboard'}</span>
+      {/* Clean Page Title (Redundant Home/Showcase sub-breadcrumbs removed) */}
+      <div className="flex items-center gap-2.5 text-sm min-w-0">
+        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+        <h2 className="font-extrabold text-slate-900 dark:text-white tracking-tight text-sm sm:text-base">
+          {TAB_LABELS[activeTab] || 'Dashboard'}
+        </h2>
+        <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+          &bull; RVCE Autonomous Governance
+        </span>
       </div>
 
-      {/* Search + Actions */}
+      {/* Contextual Actions (Duplicate search & duplicate enroll removed) */}
       <div className="flex items-center gap-2">
-        {/* Search */}
-        <div className="relative hidden md:flex items-center">
-          <Search className="absolute left-3 w-3.5 h-3.5 text-slate-500 pointer-events-none" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search students…"
-            className="w-52 pl-9 pr-10 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.06] transition-all"
-          />
-          <button
-            type="button"
-            onClick={() => setIsCommandPaletteOpen(true)}
-            className="absolute right-2 text-[10px] font-mono text-slate-500 px-1 py-0.5 rounded border border-white/10 hover:text-white transition-colors"
-          >
-            ⌘K
-          </button>
-        </div>
-
         {/* View toggle (only for directory) */}
         {activeTab === 'directory' && (
-          <div className="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+          <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06]">
             <button
               type="button"
               onClick={() => setViewMode('table')}
-              className={`p-1.5 rounded-lg transition-all ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-all ${
+                viewMode === 'table'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
               title="Table view"
             >
               <TableProperties className="w-3.5 h-3.5" />
@@ -92,8 +69,12 @@ export default function Topbar({ activeTab }) {
             <button
               type="button"
               onClick={() => setViewMode('cards')}
-              className={`p-1.5 rounded-lg transition-all ${viewMode === 'cards' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-              title="Grid view"
+              className={`p-1.5 rounded-lg transition-all ${
+                viewMode === 'cards'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Grid cards view"
             >
               <LayoutGrid className="w-3.5 h-3.5" />
             </button>
@@ -104,20 +85,10 @@ export default function Topbar({ activeTab }) {
         <button
           type="button"
           onClick={refresh}
-          className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
-          title="Refresh"
+          className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-slate-200 dark:border-white/[0.06] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs"
+          title="Refresh Metrics"
         >
           <RefreshCw className="w-4 h-4" />
-        </button>
-
-        {/* Enroll CTA */}
-        <button
-          type="button"
-          onClick={openCreateDrawer}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all shadow-glow-blue active:scale-95"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Enroll</span>
         </button>
       </div>
     </header>

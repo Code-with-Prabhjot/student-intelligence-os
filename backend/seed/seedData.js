@@ -2534,4 +2534,8 @@ const seedDatabase = async () => {
   }
 };
 
-seedDatabase();
+if (require.main === module) {
+  seedDatabase();
+}
+
+module.exports = { realisticStudents, seedDatabase };

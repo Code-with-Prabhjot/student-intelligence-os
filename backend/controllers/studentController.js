@@ -299,7 +299,22 @@ const initialSeed = [
   },
 ];
 
-let inMemoryStudents = [...initialSeed];
+let allSeedStudents = [...initialSeed];
+try {
+  const { realisticStudents } = require('../seed/seedData');
+  if (Array.isArray(realisticStudents) && realisticStudents.length > 0) {
+    allSeedStudents = realisticStudents.map((st, idx) => ({
+      ...st,
+      _id: st._id || '65e01a1a1a1a1a1a1a' + String(idx + 1).padStart(6, '0'),
+      createdAt: st.createdAt || new Date('2023-08-10'),
+      updatedAt: st.updatedAt || new Date('2024-02-15'),
+    }));
+  }
+} catch (e) {
+  console.warn('[studentController] Error loading realisticStudents fallback:', e.message);
+}
+
+let inMemoryStudents = [...allSeedStudents];
 
 // Helper to determine if real MongoDB is currently connected
 const isMongoConnected = () => mongoose.connection.readyState === 1;
